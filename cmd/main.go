@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Assignment02/handlers"
 	"encoding/json"
 	"errors"
 	"log"
@@ -11,14 +12,10 @@ import (
 	"time"
 )
 
-type ServerState struct {
-	startTime   time.Time
-	_useMocking bool
-}
-
 func (state ServerState) UseMocking() bool {
 	return state._useMocking
 }
+
 
 func (state ServerState) UptimeInSeconds() float64 {
 	return time.Since(state.startTime).Seconds()
@@ -48,6 +45,7 @@ func main() {
 		func(w http.ResponseWriter, r *http.Request) {
 			yo(&serverState, w, r)
 		})
+
 
 	log.Println("Starting server on port " + port + " ...")
 	log.Fatal(http.ListenAndServe(":"+port, nil))
