@@ -1,10 +1,5 @@
 package utils
 
-type ServerState struct {
-	startTime   time.Time
-	_useMocking bool
-}
-
 type CountryRenewableOutput struct {
 	CountryName         string  `json:"name"`
 	IsoCode             string  `json:"isoCode"`

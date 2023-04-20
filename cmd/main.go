@@ -2,28 +2,30 @@ package main
 
 import (
 	"Assignment02/handlers"
-	"encoding/json"
-	"errors"
+	"Assignment02/utils"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
-	"time"
 )
+
+/*
+type ServerState struct {
+	startTime   time.Time
+	_useMocking bool
+}
 
 func (state ServerState) UseMocking() bool {
 	return state._useMocking
 }
 
-
 func (state ServerState) UptimeInSeconds() float64 {
 	return time.Since(state.startTime).Seconds()
 }
+*/
 
 func main() {
 
-	serverState := ServerState{}
+	// serverState := ServerState{}  // Currently unused
 
 	// Extract PORT variable from the environment variables
 	port := os.Getenv("PORT")
@@ -34,23 +36,14 @@ func main() {
 		port = "8080"
 	}
 
-	http.HandleFunc(
-		"/",
-		func(w http.ResponseWriter, r *http.Request) {
-			yo(&serverState, w, r)
-		})
-
-	http.HandleFunc(
-		"/energy/v1/renewables/current/",
-		func(w http.ResponseWriter, r *http.Request) {
-			yo(&serverState, w, r)
-		})
-
+	http.HandleFunc(utils.DEFAULT_PATH, handlers.DefaultHandler)
+	http.HandleFunc(utils.CURRENT_PATH, handlers.HandleGetRequestForCurrentPercentage)
 
 	log.Println("Starting server on port " + port + " ...")
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
+/*
 func FindCountrySearchFromURL(r url.URL) (string, error) {
 	split := strings.Split(r.Path, "/")
 	if len(split) > 2 {
@@ -62,7 +55,7 @@ func FindCountrySearchFromURL(r url.URL) (string, error) {
 	return "", nil
 }
 
-func SearchCountryName(country string) (*CountryItem, int, error) {
+func SearchCountryName(country string) (*utils.CountryItem, int, error) {
 	country = strings.ReplaceAll(country, " ", "%20")
 
 	countryRequest, err := http.NewRequest(
@@ -82,7 +75,7 @@ func SearchCountryName(country string) (*CountryItem, int, error) {
 	if response.Header.Get("content-type") != "application/json" {
 		return nil, http.StatusFailedDependency, err
 	}
-	var countryItems []CountryItem
+	var countryItems []utils.CountryItem
 	err = json.NewDecoder(response.Body).Decode(&countryItems)
 	if err != nil {
 		return nil, http.StatusFailedDependency, err
@@ -115,7 +108,7 @@ func yo(serverState *ServerState, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	returnVal := CountryRenewableOutput{}
+	returnVal := utils.CountryRenewableOutput{}
 
 	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(returnVal)
@@ -124,3 +117,4 @@ func yo(serverState *ServerState, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+*/

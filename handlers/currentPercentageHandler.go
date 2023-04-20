@@ -1,13 +1,12 @@
 package handlers
 
 import (
-  "encoding/csv"
-  "fmt"
-  "os"
-  "net/http"
-  "strings"
+	"encoding/csv"
+	"fmt"
+	"net/http"
+	"os"
+	//"strings"
 )
-
 
 // Dedicated handler for GET requests
 func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +14,6 @@ func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request
 	// Get the country name from the request URL
 	//URLParts := strings.Split(r.URL.String(), "/")
 	//countryName := URLParts[??]
-
 
 	// Open the CSV file
 	fd, err := os.Open("renewable-share-energy.csv")
