@@ -53,13 +53,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-type CountryRenewableOutput struct {
-	CountryName         string  `json:"name"`
-	IsoCode             string  `json:"isoCode"`
-	Year                int     `json:"year"`
-	RenewablePercentage float32 `json:"percentage"`
-}
-
 func FindCountrySearchFromURL(r url.URL) (string, error) {
 	split := strings.Split(r.Path, "/")
 	if len(split) > 2 {
@@ -69,18 +62,6 @@ func FindCountrySearchFromURL(r url.URL) (string, error) {
 	}
 
 	return "", nil
-}
-
-type CountryItemName struct {
-	Common string `json:"common"`
-}
-
-type CountryItem struct {
-	Name         CountryItemName   `json:"name"`
-	Languages    map[string]string `json:"languages"`
-	Borders      []string          `json:"borders"`
-	Cca2         string            `json:"cca2"`
-	MapsInternal map[string]string `json:"maps"`
 }
 
 func SearchCountryName(country string) (*CountryItem, int, error) {
