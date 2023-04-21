@@ -11,12 +11,12 @@ import (
 	"strconv"
 )
 
-func createRenewableEnergyDataset(data [][]string) []utils.StructTest {
+func createRenewableEnergyDataset(data [][]string) []utils.RenewableEnergy {
 	// convert csv lines to array of structs
-	var RenewableEnergyDataset []utils.StructTest
+	var RenewableEnergyDataset []utils.RenewableEnergy
 	for i, line := range data {
 		if i > 0 { // omit header line
-			var rec utils.StructTest
+			var rec utils.RenewableEnergy
 			var err error
 			for j, field := range line {
 				if j == 0 {

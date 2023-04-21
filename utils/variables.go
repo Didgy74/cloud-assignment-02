@@ -17,4 +17,4 @@ func getCSVFilepath() string {
 var CSVFilePath = getCSVFilepath()
 
 // "Storage" for the renewable energy data. It is set in the main function
-var RenewableEnergyDataset []StructTest
+var RenewableEnergyDataset []RenewableEnergy

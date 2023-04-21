@@ -25,13 +25,6 @@ func (state *ServerState) InsertWebhook(registration WebhookRegistration) int {
 	return output
 }
 
-type CountryRenewableOutput struct {
-	CountryName         string  `json:"name"`
-	IsoCode             string  `json:"isoCode"`
-	Year                int     `json:"year"`
-	RenewablePercentage float32 `json:"percentage"`
-}
-
 type CountryItemName struct {
 	Common string `json:"common"`
 }
@@ -49,7 +42,7 @@ type WebhookRegistration struct {
 	Event string `json:"event"`
 }
 
-type StructTest struct {
+type RenewableEnergy struct {
 	Entity     string  `json:"Entity"`
 	Code       string  `json:"Code"`
 	Year       int     `json:"Year"`
