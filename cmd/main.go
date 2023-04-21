@@ -12,7 +12,7 @@ func main() {
 
 	serverState := utils.ServerState{}
 
-	// Extract PORT variable from the environment variables
+	// Extract PORT variable from the environment variables0
 	port := os.Getenv("PORT")
 
 	// Override port with default port if not provided (e.g. local deployment)

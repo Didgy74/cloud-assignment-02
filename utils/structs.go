@@ -48,3 +48,10 @@ type WebhookRegistration struct {
 	Url   string `json:"url"`
 	Event string `json:"event"`
 }
+
+type StructTest struct {
+	Entity     string  `json:"Entity"`
+	Code       string  `json:"Code"`
+	Year       int     `json:"Year"`
+	Renewables float64 `json:"Renewables (% equivalent primary energy)"`
+}
