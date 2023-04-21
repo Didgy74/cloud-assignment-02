@@ -8,24 +8,9 @@ import (
 	"os"
 )
 
-/*
-type ServerState struct {
-	startTime   time.Time
-	_useMocking bool
-}
-
-func (state ServerState) UseMocking() bool {
-	return state._useMocking
-}
-
-func (state ServerState) UptimeInSeconds() float64 {
-	return time.Since(state.startTime).Seconds()
-}
-*/
-
 func main() {
 
-	// serverState := ServerState{}  // Currently unused
+	serverState := utils.ServerState{}
 
 	// Extract PORT variable from the environment variables
 	port := os.Getenv("PORT")
@@ -38,6 +23,13 @@ func main() {
 
 	http.HandleFunc(utils.DEFAULT_PATH, handlers.DefaultHandler)
 	http.HandleFunc(utils.CURRENT_PATH, handlers.HandleGetRequestForCurrentPercentage)
+
+	// Add the
+	http.HandleFunc(
+		utils.NOTIFICATIONS_PATH,
+		func(w http.ResponseWriter, r *http.Request) {
+			handlers.WebhookRegistrationHandler(&serverState, w, r)
+		})
 
 	log.Println("Starting server on port " + port + " ...")
 	log.Fatal(http.ListenAndServe(":"+port, nil))

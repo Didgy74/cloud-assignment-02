@@ -1,5 +1,30 @@
 package utils
 
+import "time"
+
+type ServerState struct {
+	startTime   time.Time
+	_useMocking bool
+
+	webhook_id_tracker int
+	webHooks           []WebhookRegistration
+}
+
+func (state ServerState) UseMocking() bool {
+	return state._useMocking
+}
+
+func (state ServerState) UptimeInSeconds() float64 {
+	return time.Since(state.startTime).Seconds()
+}
+
+func (state *ServerState) InsertWebhook(registration WebhookRegistration) int {
+	state.webHooks = append(state.webHooks, registration)
+	output := state.webhook_id_tracker
+	state.webhook_id_tracker++
+	return output
+}
+
 type CountryRenewableOutput struct {
 	CountryName         string  `json:"name"`
 	IsoCode             string  `json:"isoCode"`
@@ -17,4 +42,9 @@ type CountryItem struct {
 	Borders      []string          `json:"borders"`
 	Cca2         string            `json:"cca2"`
 	MapsInternal map[string]string `json:"maps"`
+}
+
+type WebhookRegistration struct {
+	Url   string `json:"url"`
+	Event string `json:"event"`
 }

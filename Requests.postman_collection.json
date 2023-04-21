@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "c996617f-925e-4130-93bc-297a04916729",
+		"name": "Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Webhook Registration 01",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"url\": \"https://localhost:8080/client/\",\r\n   \"country\": \"NOR\",\r\n   \"calls\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/energy/v1/notifications/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"energy",
+						"v1",
+						"notifications",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
