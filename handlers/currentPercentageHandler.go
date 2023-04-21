@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"Assignment02/utils"
 	"encoding/csv"
 	"fmt"
 	"net/http"
@@ -16,7 +17,7 @@ func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request
 	//countryName := URLParts[??]
 
 	// Open the CSV file
-	fd, err := os.Open("renewable-share-energy.csv")
+	fd, err := os.Open(utils.CsvFilePath)
 	if err != nil {
 		fmt.Println("Error opening CSV file.")
 		fmt.Println(err)
