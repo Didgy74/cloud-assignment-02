@@ -23,7 +23,7 @@ func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.
 					if country == "" {
 						rec.Entity = field
 					} else {
-						if field == country {
+						if strings.EqualFold(field, country) { // case insensitive comparison
 							rec.Entity = field
 						} else {
 							flag = false
