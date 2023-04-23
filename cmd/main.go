@@ -8,35 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 )
 
-func createRenewableEnergyDataset(data [][]string) []utils.RenewableEnergy {
-	// convert csv lines to array of structs
-	var RenewableEnergyDataset []utils.RenewableEnergy
-	for i, line := range data {
-		if i > 0 { // omit header line
-			var rec utils.RenewableEnergy
-			var err error
-			for j, field := range line {
-				if j == 0 {
-					rec.Entity = field
-				} else if j == 1 {
-					rec.Code = field
-				} else if j == 2 {
-					rec.Year, err = strconv.Atoi(field)
-				} else if j == 3 {
-					rec.Renewables, err = strconv.ParseFloat(field, 64)
-					if err != nil {
-						continue
-					}
-				}
-			}
-			RenewableEnergyDataset = append(RenewableEnergyDataset, rec)
-		}
-	}
-	return RenewableEnergyDataset
-}
 func main() {
 
 	serverState := utils.ServerState{}
@@ -61,8 +34,8 @@ func main() {
 	//fmt.Println(data) // Print the CSV data to the console
 	//fmt.Fprintf(w, "%v", data) // Print the CSV data to the browser
 
-	// Assign successive lines of raw CSV data to fields of the created structs
-	utils.RenewableEnergyDataset = createRenewableEnergyDataset(data)
+	// Store the CSV data in a variable
+	utils.RenewableEnergyDataset = data
 
 	// Extract PORT variable from the environment variables0
 	port := os.Getenv("PORT")
