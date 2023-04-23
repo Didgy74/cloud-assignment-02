@@ -20,17 +20,14 @@ func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.
 			var flag bool = true
 			for j, field := range line {
 				if j == 0 {
-					if country == "" {
-						rec.Entity = field
-					} else {
-						if strings.EqualFold(field, country) { // case insensitive comparison
-							rec.Entity = field
-						} else {
-							flag = false
-							break
-						}
+					if !(country == "" || strings.EqualFold(field, country)) {
+						flag = false
 					}
+					rec.Entity = field
 				} else if j == 1 {
+					if country == "" || strings.EqualFold(field, country) || flag == true {
+						flag = true
+					}
 					rec.Code = field
 				} else if j == 2 {
 					rec.Year, err = strconv.Atoi(field)
@@ -55,11 +52,12 @@ func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request
 	// Get the country name from the request URL
 	URLParts := strings.Split(r.URL.String(), "/")
 	countryName := URLParts[5]
-	if countryName == "" {
-		fmt.Println("Displaying every item")
-	} else {
-		fmt.Println("Displaying every item where Entity == ", countryName)
+
+	fmt.Print("Displaying every item ")
+	if countryName != "" {
+		fmt.Print("where Entity/Code = ", countryName)
 	}
+	fmt.Println()
 
 	// Assign successive lines of raw CSV data to fields of the created structs
 	var RenewableEnergyDataset = createRenewableEnergyDatasetTask1(utils.RenewableEnergyDataset, countryName)
