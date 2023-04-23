@@ -11,6 +11,27 @@ import (
 )
 
 func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.RenewableEnergy {
+	optionalParameter := strings.Split(country, "?")
+
+	var neighbours bool = false
+
+	if len(optionalParameter) > 1 {
+		country = optionalParameter[0]
+		if optionalParameter[1] == "neighbours=true" {
+			neighbours = true
+		}
+	}
+
+	// Prepare empty array to populate
+	var borders []string
+
+	// Populate the array
+	for _, line := range utils.RestCountriesDataset {
+		if strings.EqualFold(line.Name.Common, country) {
+			borders = line.Borders
+		}
+	}
+
 	// convert csv lines to array of structs
 	var RenewableEnergyDataset []utils.RenewableEnergy
 	for i, line := range data {
@@ -25,6 +46,14 @@ func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.
 					}
 					rec.Entity = field
 				} else if j == 1 {
+					if neighbours == true {
+						for _, line := range borders {
+							if country == "" || strings.EqualFold(field, line) || flag == true {
+								flag = true
+							}
+						}
+					}
+
 					if country == "" || strings.EqualFold(field, country) || flag == true {
 						flag = true
 					}
@@ -50,8 +79,7 @@ func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.
 func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request) {
 
 	// Get the country name from the request URL
-	URLParts := strings.Split(r.URL.String(), "/")
-	countryName := URLParts[5]
+	countryName := strings.Split(r.URL.String(), "/")[5]
 
 	fmt.Print("Displaying every item ")
 	if countryName != "" {

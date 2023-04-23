@@ -48,3 +48,17 @@ type RenewableEnergy struct {
 	Year       int     `json:"Year"`
 	Renewables float64 `json:"Renewables (% equivalent primary energy)"`
 }
+
+type RESTCountries struct {
+	Name struct {
+		Common string `json:"common"`
+	} `json:"name"`
+	Borders []string `json:"borders"`
+	CCA3    string   `json:"cca3"`
+}
+
+type RESTCountriesNEW struct {
+	Name    string   `json:"name"`
+	Borders []string `json:"borders"`
+	CCA3    string   `json:"cca3"`
+}

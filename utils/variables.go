@@ -19,3 +19,5 @@ var CSVFilePath = getCSVFilepath()
 // "Storage" for the renewable energy data. It is set in the main function
 // var RenewableEnergyDataset []RenewableEnergy
 var RenewableEnergyDataset [][]string
+
+var RestCountriesDataset []RESTCountries

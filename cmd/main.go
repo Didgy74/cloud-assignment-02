@@ -4,6 +4,7 @@ import (
 	"Assignment02/handlers"
 	"Assignment02/utils"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,42 @@ import (
 func main() {
 
 	serverState := utils.ServerState{}
+
+	NewRequest, err := http.NewRequest(http.MethodGet, utils.REST_COUNTRIES_URL, nil)
+	if err != nil {
+		fmt.Errorf("Error in creating request:", err.Error())
+	}
+
+	// Setting content type -> effect depends on the service provider
+	NewRequest.Header.Add("content-type", "application/json")
+
+	client := &http.Client{}
+	defer client.CloseIdleConnections()
+
+	res, err := client.Do(NewRequest)
+	if err != nil {
+		fmt.Errorf("Error in response:", err.Error())
+	}
+
+	// Instantiate decoder
+	decoder := json.NewDecoder(res.Body)
+
+	// Prepare empty struct to populate
+	RESTCountries := []utils.RESTCountries{}
+
+	// Decode uni instance --> Alternative: "err := json.NewDecoder(r.Body).Decode(&uni)"
+	err = decoder.Decode(&RESTCountries)
+	if err != nil {
+		// Note: more often than not is this error due to client-side input, rather than server-side issues
+		fmt.Println("Error during decoding: ", err.Error())
+		return
+	}
+	for _, line := range RESTCountries {
+		utils.RestCountriesDataset = append(utils.RestCountriesDataset, line)
+	}
+
+	// Flat printing
+	//fmt.Println(utils.RestCountriesDataset)
 
 	// Open the CSV file
 	fd, err := os.Open(utils.CSVFilePath)
