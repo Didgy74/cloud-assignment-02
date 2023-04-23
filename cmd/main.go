@@ -18,6 +18,8 @@ func main() {
 	NewRequest, err := http.NewRequest(http.MethodGet, utils.REST_COUNTRIES_URL, nil)
 	if err != nil {
 		fmt.Errorf("Error in creating request:", err.Error())
+	} else {
+		fmt.Println("Successfully created http request.")
 	}
 
 	// Setting content type -> effect depends on the service provider
@@ -29,6 +31,8 @@ func main() {
 	res, err := client.Do(NewRequest)
 	if err != nil {
 		fmt.Errorf("Error in response:", err.Error())
+	} else {
+		fmt.Println("Successfully received http response.")
 	}
 
 	// Instantiate decoder
@@ -43,6 +47,8 @@ func main() {
 		// Note: more often than not is this error due to client-side input, rather than server-side issues
 		fmt.Println("Error during decoding: ", err.Error())
 		return
+	} else {
+		fmt.Println("Successfully decoded JSON data.")
 	}
 	for _, line := range RESTCountries {
 		utils.RestCountriesDataset = append(utils.RestCountriesDataset, line)
@@ -56,8 +62,9 @@ func main() {
 	if err != nil {
 		fmt.Println("Error opening CSV file.")
 		fmt.Println(err)
+	} else {
+		fmt.Println("Successfully opened the CSV file.")
 	}
-	fmt.Println("Successfully opened the CSV file.")
 	defer fd.Close() // Remember to close the file at the end of the program
 
 	// Read the CSV file
@@ -66,6 +73,8 @@ func main() {
 	if err != nil {
 		fmt.Println("Error reading CSV file.")
 		fmt.Println(err)
+	} else {
+		fmt.Println("Successfully read the CSV file.")
 	}
 
 	//fmt.Println(data) // Print the CSV data to the console

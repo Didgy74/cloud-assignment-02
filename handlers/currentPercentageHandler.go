@@ -50,6 +50,7 @@ func createRenewableEnergyDatasetTask1(data [][]string, country string) []utils.
 						for _, line := range borders {
 							if country == "" || strings.EqualFold(field, line) || flag == true {
 								flag = true
+								break
 							}
 						}
 					}

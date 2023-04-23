@@ -16,8 +16,8 @@ func getCSVFilepath() string {
 // Absolute path to the CSV file
 var CSVFilePath = getCSVFilepath()
 
-// "Storage" for the renewable energy data. It is set in the main function
-// var RenewableEnergyDataset []RenewableEnergy
+// "Storage" for the renewable energy data
 var RenewableEnergyDataset [][]string
 
+// "Storage" for the rest countries data
 var RestCountriesDataset []RESTCountries
