@@ -4,19 +4,30 @@ import (
 	"Assignment02/utils"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
-type WebhookRegistrationSource struct {
+func NotificationHandler(serverState *utils.ServerState, w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		// Make sure the URL doesn't have anything extra
+
+		webhookRegistrationHandler(serverState, w, r)
+	} else if r.Method == http.MethodDelete {
+		webhookDeletion(serverState, w, r)
+	}
+}
+
+type WebhookRegistrationBody struct {
 	Url         string `json:"url"`
 	CountryCode string `json:"country"`
 	Calls       int    `json:"calls"`
 }
 
 type WebhookRegistrationOutput struct {
-	Webhook_id int `json:"webhook_id"`
+	WebhookId int `json:"webhook_id"`
 }
 
-func WebhookRegistrationHandler(serverState *utils.ServerState, w http.ResponseWriter, r *http.Request) {
+func webhookRegistrationHandler(serverState *utils.ServerState, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		return
 	}
@@ -25,7 +36,7 @@ func WebhookRegistrationHandler(serverState *utils.ServerState, w http.ResponseW
 		return
 	}
 
-	var command WebhookRegistrationSource
+	var command WebhookRegistrationBody
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&command)
 	if err != nil {
@@ -36,11 +47,10 @@ func WebhookRegistrationHandler(serverState *utils.ServerState, w http.ResponseW
 		Url:   command.Url,
 		Event: command.CountryCode,
 	}
-
 	registrationId := serverState.InsertWebhook(registration)
 
 	output := WebhookRegistrationOutput{
-		Webhook_id: registrationId,
+		WebhookId: registrationId,
 	}
 	encoder := json.NewEncoder(w)
 	err = encoder.Encode(output)
@@ -48,4 +58,28 @@ func WebhookRegistrationHandler(serverState *utils.ServerState, w http.ResponseW
 		return
 	}
 
+}
+
+func webhookDeletion(serverState *utils.ServerState, w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		return
+	}
+
+	// Extract the ID from the path
+	remainingPath := r.URL.Path[len(utils.NOTIFICATIONS_PATH):]
+	if remainingPath == "" {
+		return
+	}
+
+	// Interpret it as an int
+	id, err := strconv.Atoi(remainingPath)
+	if err != nil {
+		return
+	}
+
+	deletionSuccess := serverState.DeleteWebhook(id)
+	if !deletionSuccess {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }

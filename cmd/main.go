@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	serverState := utils.ServerState{}
+	serverState := utils.MakeServerState()
 
 	NewRequest, err := http.NewRequest(http.MethodGet, utils.REST_COUNTRIES_URL, nil)
 	if err != nil {
@@ -100,7 +100,7 @@ func main() {
 	http.HandleFunc(
 		utils.NOTIFICATIONS_PATH,
 		func(w http.ResponseWriter, r *http.Request) {
-			handlers.WebhookRegistrationHandler(&serverState, w, r)
+			handlers.NotificationHandler(&serverState, w, r)
 		})
 
 	log.Println("Starting server on port " + port + " ...")

@@ -6,8 +6,14 @@ type ServerState struct {
 	startTime   time.Time
 	_useMocking bool
 
-	webhook_id_tracker int
-	webHooks           []WebhookRegistration
+	webhookIdTracker int
+	webHooks         map[int]WebhookRegistration
+}
+
+func MakeServerState() ServerState {
+	out := ServerState{}
+	out.webHooks = make(map[int]WebhookRegistration)
+	return out
 }
 
 func (state ServerState) UseMocking() bool {
@@ -19,10 +25,14 @@ func (state ServerState) UptimeInSeconds() float64 {
 }
 
 func (state *ServerState) InsertWebhook(registration WebhookRegistration) int {
-	state.webHooks = append(state.webHooks, registration)
-	output := state.webhook_id_tracker
-	state.webhook_id_tracker++
+	output := state.webhookIdTracker
+	state.webHooks[output] = registration
+	state.webhookIdTracker++
 	return output
+}
+
+func (state *ServerState) DeleteWebhook(id int) bool {
+	return false
 }
 
 type CountryItemName struct {
