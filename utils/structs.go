@@ -32,7 +32,11 @@ func (state *ServerState) InsertWebhook(registration WebhookRegistration) int {
 }
 
 func (state *ServerState) DeleteWebhook(id int) bool {
-	return false
+	_, exists := state.webHooks[id]
+	if exists {
+		delete(state.webHooks, id)
+	}
+	return exists
 }
 
 type CountryItemName struct {
