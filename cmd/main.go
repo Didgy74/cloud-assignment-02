@@ -96,11 +96,11 @@ func main() {
 	http.HandleFunc(utils.CURRENT_PATH, handlers.HandleGetRequestForCurrentPercentage)
 	http.HandleFunc(utils.HISTORY_PATH, handlers.HandleGetRequestForHistoricalPercentage)
 
-	// Add the
+	// Add the notification handler
 	http.HandleFunc(
 		utils.NOTIFICATIONS_PATH,
 		func(w http.ResponseWriter, r *http.Request) {
-			handlers.NotificationHandler(&serverState, w, r)
+			handlers.NotificationHandler(&serverState, utils.NOTIFICATIONS_PATH, w, r)
 		})
 
 	log.Println("Starting server on port " + port + " ...")

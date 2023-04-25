@@ -1,6 +1,8 @@
 package utils
 
-import "time"
+import (
+	"time"
+)
 
 type ServerState struct {
 	startTime   time.Time
@@ -39,6 +41,17 @@ func (state *ServerState) DeleteWebhook(id int) bool {
 	return exists
 }
 
+// GetAllWebhooks
+//
+// Makes a copy and returns it
+func GetAllWebhooks(state ServerState) map[int]WebhookRegistration {
+	out := make(map[int]WebhookRegistration)
+	for key, value := range state.webHooks {
+		out[key] = value
+	}
+	return out
+}
+
 type CountryItemName struct {
 	Common string `json:"common"`
 }
@@ -52,8 +65,9 @@ type CountryItem struct {
 }
 
 type WebhookRegistration struct {
-	Url   string `json:"url"`
-	Event string `json:"event"`
+	Url         string `json:"url"`
+	Event       string `json:"event"`
+	CountryCode string
 }
 
 type RenewableEnergy struct {
