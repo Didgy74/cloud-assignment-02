@@ -65,9 +65,10 @@ type CountryItem struct {
 }
 
 type WebhookRegistration struct {
-	Url         string `json:"url"`
-	Event       string `json:"event"`
+	Url         string
+	Event       string
 	CountryCode string
+	Calls       int
 }
 
 type RenewableEnergy struct {
