@@ -98,6 +98,7 @@ func HandleGetRequestForCurrentPercentage(w http.ResponseWriter, r *http.Request
 	}
 
 	//fmt.Println(string(jsonData)) // Print the JSON data to the console
-	fmt.Fprintf(w, "%v", string(jsonData)) // Print the JSON data to the browser
-
+	//fmt.Fprintf(w, "%v", string(jsonData)) // Print the JSON data to the browser
+	w.Header().Set("content-type", "application/json")
+	w.Write(jsonData)
 }
