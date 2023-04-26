@@ -48,8 +48,16 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 			//Return the information for all years
 			meanHistoricalPercentage(w, data, 1965, 2021)
 		}
+	} else { //in case a country code and time boundaries are a part of the URL
+		if len(parts[5]) != 3 { // Check for the length of the country code and return an error if the code is not valid
+			http.Error(w, "Please enter a valid 3-letter country code.", http.StatusBadRequest)
+			return
+		}
+		//Check if any time parameters were specified
+		if r.URL.RawQuery == "" { //In case no time boundaries were not specified
+			historyPercentageByCountry(w, data, strings.ToUpper(parts[5]), 1965, 2021)
+		}
 	}
-
 	//Return OK status code when finished
 	http.Error(w, "OK", http.StatusOK)
 
@@ -95,6 +103,43 @@ func meanHistoricalPercentage(w http.ResponseWriter, data []utils.RenewableEnerg
 	err := json.NewEncoder(w).Encode(response)
 	if err != nil {
 		http.Error(w, "Error occurred while encoding coding the response "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+}
+
+// This function retrieves the renewable energy percentages for the specifies country and time limits and writes it to the response writer
+func historyPercentageByCountry(w http.ResponseWriter, data []utils.RenewableEnergy, countryCode string, start int, finish int) {
+
+	//Instantiate the response variable to be returned to the client
+	var response []utils.RenewableEnergy
+
+	//Loop over the data set adding all the object with a matching the 3-letter code and falling withing the time limits
+	for index, element := range data {
+		country := element.Entity
+		if element.Code == countryCode { // Check if the current element matches the 3-letter code
+			i := index
+			for data[i].Entity == country { //Check that loop hasn't reached a new country
+				if data[i].Year >= start && data[i].Year <= finish { //Check that the element falls withing the time limits
+
+					//Add the element to the response slice
+					response = append(response, data[i])
+				}
+				i++
+			}
+			break
+
+		}
+	}
+	//Handling the case where no country with the specified code was found
+	if response == nil || len(response) == 0 {
+		http.Error(w, "No country matching the code was found, please make sure the code you entered is valid.", http.StatusNotFound)
+		return
+	}
+	//Encode and send the response to the client or return an error if the encoding fails
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, "Error occurred while decoding the response", http.StatusInternalServerError)
 		return
 	}
 

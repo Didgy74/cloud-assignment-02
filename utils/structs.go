@@ -78,6 +78,12 @@ type RenewableEnergy struct {
 	Renewables float64 `json:"Renewables (% equivalent primary energy)"`
 }
 
+type MeanRenewableEnergy struct {
+	Entity     string  `json:"Entity"`
+	Code       string  `json:"Code"`
+	Renewables float64 `json:"Renewables (% equivalent primary energy)"`
+}
+
 type RESTCountries struct {
 	Name struct {
 		Common string `json:"common"`
