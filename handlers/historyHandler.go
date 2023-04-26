@@ -48,6 +48,27 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		if r.URL.RawQuery == "" { //In case no time boundaries were not specified
 			//Return the information for all years
 			meanHistoricalPercentage(w, data, 1965, 2021)
+		} else { //In case one or two time boundaries were specified
+
+			//Extract the parameters
+			parameters := r.URL.RawQuery
+
+			//Process the parameters and return an error if the parameters were malformed
+			start, finish, err := processParameters(parameters)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if finish == 0 { //In case only the begin parameter was specified
+				//Return mean percentage starting from the specified year to 2021
+				meanHistoricalPercentage(w, data, start, 2021)
+			} else if start == 0 { // In case only the end parameter was specified
+				//Return  mean percentage starting from 1965 to the specified year
+				meanHistoricalPercentage(w, data, 1965, finish)
+			} else { // In case a time interval was specified
+				//Return  mean percentage for the specified year range
+				meanHistoricalPercentage(w, data, start, finish)
+			}
 		}
 	} else { //in case a country code and time boundaries are a part of the URL
 		if len(parts[5]) != 3 { // Check for the length of the country code and return an error if the code is not valid
