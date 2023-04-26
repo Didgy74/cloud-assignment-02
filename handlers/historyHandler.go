@@ -3,6 +3,7 @@ package handlers
 import (
 	"Assignment02/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -56,7 +57,31 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		//Check if any time parameters were specified
 		if r.URL.RawQuery == "" { //In case no time boundaries were not specified
 			historyPercentageByCountry(w, data, strings.ToUpper(parts[5]), 1965, 2021)
+		} else { //In case one or two time boundaries were specified
+
+			//Extract the parameters
+			parameters := r.URL.RawQuery
+
+			//Process the parameters and return an error if the parameters were malformed
+			start, finish, err := processParameters(parameters)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			if finish == 0 { //In case only the begin parameter was specified
+				//Return mean percentage starting from the specified year to 2021
+				historyPercentageByCountry(w, data, parts[5], start, 2021)
+			} else if start == 0 { // In case only the end parameter was specified
+				//Return  mean percentage starting from 1965 to the specified year
+				historyPercentageByCountry(w, data, parts[5], 1965, finish)
+			} else { // In case a time interval was specified
+				//Return  mean percentage for the specified year range
+				historyPercentageByCountry(w, data, parts[5], start, finish)
+			}
+
 		}
+
 	}
 	//Return OK status code when finished
 	http.Error(w, "OK", http.StatusOK)
@@ -143,6 +168,95 @@ func historyPercentageByCountry(w http.ResponseWriter, data []utils.RenewableEne
 		return
 	}
 
+}
+
+// This function takes care of processing the parameters and making sure they follow the correct format
+func processParameters(params string) (start, finish int, err error) {
+
+	//Check that the parameters has at least one time limit before further processing
+	if !strings.Contains(strings.ToLower(params), "begin") && !strings.Contains(strings.ToLower(params), "end") {
+		return 0, 0, fmt.Errorf("Malformed URL. Expected format: ... " + utils.HISTORY_PATH + "<country code>?begin=<year>&end=<year>")
+	}
+
+	//Check how many time limits has been specified
+	if strings.Contains(params, "&") { //In case two time limits were specified
+
+		//Split the parameters and extract the start and finish time limits as a string
+		boundaries := strings.Split(params, "&")
+		begin := strings.Split(boundaries[0], "=")
+		end := strings.Split(boundaries[1], "=")
+
+		if len(begin) != 2 || len(end) != 2 {
+			return 0, 0, fmt.Errorf("Malformed URL. Expected format: ... " + utils.HISTORY_PATH + "<country code>?begin=<year>&end=<year>")
+		}
+
+		//Convert the string start time to an integer and return an error if the conversion fails
+		start, err := strconv.Atoi(begin[1])
+		if err != nil {
+			return 0, 0, fmt.Errorf("error while parsing time boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Convert the string end time to an integer and return an error if the conversion fails
+		finish, err := strconv.Atoi(end[1])
+		if err != nil {
+			return 0, 0, fmt.Errorf("error while parsing time boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Check that the time boundaries are within the data limits and check that the end time is greater that the begin time
+		if finish > 2021 || start < 1965 || start > finish {
+			return 0, 0, fmt.Errorf("time parameter out of boundaries, time parameters must be between 1965 and 2021. Start year must also be smaller than end year")
+		}
+
+		//Return the values with a nil error if everything goes fine
+		return start, finish, nil
+
+	} else if strings.Contains(strings.ToLower(params), "begin") { //In case only the begin parameter was specified
+
+		//Extract the parameter
+		begin := strings.Split(params, "=")
+		if len(begin) != 2 {
+			return 0, 0, fmt.Errorf("Malformed URL. Expected format: ... " + utils.HISTORY_PATH + "<country code>?begin=<year>&end=<year>")
+		}
+
+		//Convert the string start year to an integer and return an error if the conversion fails
+		start, err := strconv.Atoi(begin[1])
+		if err != nil {
+			return 0, 0, fmt.Errorf("error while parsing time boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Check that the begin year falls within the data limits
+		if start < 1965 || start > 2021 {
+			return 0, 0, fmt.Errorf("time parameter out of boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Return the value with a nil error if everything goes fine
+		return start, 0, nil
+
+	} else if strings.Contains(params, "end") { //In case only the end parameter was specified
+
+		//Extract the parameter
+		end := strings.Split(params, "=")
+		if len(end) != 2 {
+			return 0, 0, fmt.Errorf("Malformed URL. Expected format: ... " + utils.HISTORY_PATH + "<country code>?begin=<year>&end=<year>")
+		}
+
+		//Convert the string end year to an integer and return an error if the conversion fails
+		finish, err := strconv.Atoi(end[1])
+		if err != nil {
+			return 0, 0, fmt.Errorf("error while parsing time boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Check that the end year falls within the data limits
+		if finish < 1965 || finish > 2021 {
+			return 0, 0, fmt.Errorf("time parameter out of boundaries, time parameters must be between 1965 and 2021")
+		}
+
+		//Return the value with a nil error if everything goes fine
+		return 0, finish, nil
+
+	}
+
+	return 0, 0, fmt.Errorf("Malformed URL. Expected format: ... " + utils.HISTORY_PATH + "<country code>?begin=<year>&end=<year>")
 }
 
 func parse(dataset [][]string) []utils.RenewableEnergy {
